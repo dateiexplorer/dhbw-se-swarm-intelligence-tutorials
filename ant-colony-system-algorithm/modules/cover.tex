@@ -1,0 +1,112 @@
+%!TEX root = ../thesis.tex
+
+%-----------------------------------------------------------------------------%
+% COVER
+%-----------------------------------------------------------------------------%
+% This is a template for your titlepage.
+% It is recommended to not change anything. In some cases the attribute of the
+% company-logo must be adjusted. See the block below.
+% In the `settings/metadata.tex` file you can manage which information are
+% shown.
+\begin{titlepage}
+
+    % Show logos at the top of the document.
+    \begin{center}
+        \begin{minipage}{0.9\textwidth}
+            \centering
+            
+            % Company logo
+            \IfStrEq{\companyLogo}{yes}{%
+                \raisebox{-0.5\height}%
+                    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                    % Change the `width` attribute to adjust it to your 
+                    % purposes. You can also use the `hight` attribute instead.
+                    %                [width=<value>
+                    %                [height=<value>
+                    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                    {\includegraphics[width=0.2\textwidth]%
+                    {res/logos/company.png}}
+                \hfill
+            }{}%
+            % DHBW logo
+            \IfStrEq{\dhbwLogo}{yes}{%
+                \raisebox{-0.5\height}{%
+                    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                    % Change the `width` attribute to adjust it to your 
+                    % purposes. You can also use the `hight` attribute instead.
+                    %                [width=<value>
+                    %                [height=<value>
+                    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                    \includegraphics[width=0.3\textwidth]%
+                    {res/logos/dhbw.png}}
+            }{}%
+        \end{minipage}
+    \end{center}
+
+    % Some space between the header and the content.
+    \vspace{5mm}
+
+    % Title and general information
+    \begin{center}
+        \doublespacing{%
+            \vspace*{5mm}{\LARGE\textbf{\documentTitle}}
+        }%
+
+        \vspace*{8mm}{\large\textbf{\sDocumentTypePhrase}}\\
+
+        % Show degree if document is a bachelor thesis.
+        \IfDocType{bachelor}{%
+            \vspace*{6mm}{\sDegreePhrase}\\
+            \vspace*{0mm}{\textbf{\degree}}\\
+        }
+
+        % Show lecture phrase only if set and not a bachelor thesis.
+        \IfStrIsEmpty{\lecture}{}{% else
+            \IfDocType{bachelor}{}{% else
+                \vspace*{6mm}{\sLecturePhrase}\\
+                \vspace*{0mm}{\textbf{\lecture}}\\
+            }%
+        }%
+
+        \vspace*{8mm}{\sDepartmentPhrase{} \department}\\
+        \vspace*{0mm}{\sLocationUniversityPhrase{} \locationUniversity}\\
+        \vspace*{10mm}{\sDocumentAuthorPhrase}\\
+        \vspace*{0mm}{\large \textbf{\documentAuthor}}\\
+        
+        \vfill
+
+        \vspace*{0mm}{\releaseDate}\\
+
+        \vfill
+
+        % Show restriction notice if set
+        \IfStrEq{\restricted}{yes}{%
+            \vspace*{12mm}{\large\textbf{\sRestrictionNoticePhrase}}\\
+        }{}%
+    \end{center}
+
+    % % Fill empty space
+    % \vfill
+
+    % % Additional information about the author, company and DH.
+    % \begin{center}
+    %     \begin{tabular}{ll}
+    %         \textbf{\sDocumentPeriodPhrase} & \documentPeriod\\
+    %         \textbf{\sMatriculationNumberPhrase, \sCoursePhrase} & %
+    %             \matriculationNumber, \course\\
+    %         % Show company information only if set
+    %         \IfStrIsEmpty{\sCompanyPhrase}{}{% else
+    %             \IfStrIsEmpty{\companyLocation}{}{% else 
+    %                 \textbf{\sCompanyPhrase} & \companyName, %
+    %                     \companyLocation\\
+    %             }%
+    %         }%
+    %         \textbf{\sTutorPhrase} & \tutor\\
+    %         % Show evaluator if bachelor thesis is set.
+    %         \IfDocType{bachelor}{%
+    %             \textbf{\sEvaluatorPhrase} & \evaluator
+    %         }{}%
+    %     \end{tabular}
+    % \end{center}
+
+\end{titlepage}

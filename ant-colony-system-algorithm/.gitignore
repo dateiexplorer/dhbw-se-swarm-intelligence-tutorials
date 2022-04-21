@@ -1,0 +1,30 @@
+# Latex specific files
+*.acn
+*.acr
+*.alg
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.glg
+*.glo
+*.gls
+*.ist
+*.lof
+*.log
+*.lot
+*.lol
+*.run.xml
+*.toc
+*.synctex*
+*.fdb*
+*.fls
+*.glsdefs
+*.out
+*.atoc
+*.maf
+*.mtc
+*.mtc0
+
+# VS Code files
+.vscode/

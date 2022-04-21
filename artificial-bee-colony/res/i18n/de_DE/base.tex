@@ -1,0 +1,48 @@
+% Language definitions
+\newcommand{\languageShortId}{de}
+\newcommand{\languageLongId}{de_DE}
+
+% Document type
+\newcommand{\sDocumentTypePhrase}{%
+    \IfStrEqCase{\documentType}{%
+        {t1000}{Projektarbeit}%
+        {t2000}{Projektarbeit}%
+        {t3000}{Hausarbeit}%
+        {seminar}{Studienarbeit}%
+        {bachelor}{Bachelorarbeit}%
+    }[\documentType]
+}
+
+% Cover phrases
+\newcommand{\sDegreePhrase}{für die Prüfung zum}
+\newcommand{\sLecturePhrase}{für die Vorlesung}
+\newcommand{\sDepartmentPhrase}{des Studiengangs}
+\newcommand{\sLocationUniversityPhrase}{an der Dualen Hochschule Baden-Württemberg}
+\newcommand{\sDocumentAuthorPhrase}{von}
+
+\newcommand{\sDocumentPeriodPhrase}{Bearbeitungszeitraum}
+\newcommand{\sMatriculationNumberPhrase}{Matrikelnummer}
+\newcommand{\sCoursePhrase}{Kurs}
+\newcommand{\sCompanyPhrase}{Ausbildungsbetrieb}
+\newcommand{\sTutorPhrase}{%
+    \IfStrEqCase{\documentType}{%
+        {t1000}{Betreuer der Firma}%
+        {t2000}{Gutachter}%
+        {t3000}{Betreuer der Firma}%
+        {seminar}{Betreuer der Hochschule}%
+        {bachelor}{Erstgutachter}%
+        {paper}{}%
+    }[Gutachter]
+}
+\newcommand{\sEvaluatorPhrase}{Zweitgutachter}
+
+% Headlines
+\newcommand{\sRestrictionNoticePhrase}{Sperrvermerk}
+\newcommand{\sAcronymPhrase}{Abkürzungsverzeichnis}
+\newcommand{\sDeclarationPhrase}{Ehrenwörtliche Erklärung}
+\newcommand{\sListingPhrase}{Quelltext}
+\newcommand{\sListListingPhrase}{Quelltextverzeichnis}
+\newcommand{\sDataCarrierPhrase}{Datenträger}
+
+% Source
+\newcommand{\sSourcePhrase}{Quelle}
