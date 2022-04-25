@@ -1,10 +1,46 @@
 %!TEX root = ../thesis.tex
 
-%!TEX root = ../thesis.tex
-
 \section{Metapher}
 
+Der Artificial Bee Colony (ABC) Algorithmus ist vom Verhalten von Honigbienen
+inspiriert, die Nektar von Blumen sammeln und als Futter in den Bienenstock
+bringen. Dabei werden zunächst Suchbienen (\emph{scout bees}, im Folgenden
+\emph{Scouts} genannt) ausgesendet, die nach Regionen suchen, in denen Nektar
+zu finden ist. Diese kehren schließlich zurück in den Bienenstock und
+informieren andere Bienen über die Fundstelle und Qualität (\emph{fitness})
+der Futterquelle.
+Daraufhin kehren die Scouts zur Futterstelle zurück. Einige andere Bienen
+folgen ihnen. Ein kleiner Teil der Scouts sucht daraufhin nach neuen
+Futterquellen, während andere Bienen weiterhin die Qualität einer
+Futterquelle bei der Rückkehr in den Bienenstock kommunizieren.
+
 \section{Strategie}
+
+Um ein globales Optimum zu finden, wird eine Honigbienenkolonie imitiert, die
+drei Arten von Bienen beinhaltet, die sog. \emph{Employed Bees}, die
+\emph{Onlookers} und die \emph{Scouts}. Eine Hälfte der Kolonie besteht aus
+\emph{Employed Bees}, die andere Hälfte beinhaltet die \emph{Onlookers}.
+Die Futterquellen repräsentieren Lösungen eines Problems, das mit dem ABC
+gelöst werden soll. Je höher die Qualität bzw. Fitness einer Lösung ist, desto
+mehr Necktar produziert sie. Der Algorithmus konvergiert, indem die Bienen
+iterativ näher an das globale Optimum herankommen, da sie die Futterquellen mit
+der besten Fitness ansteuern.
+
+Scouts suchen zufällig nach einer neuen Futterquelle und ersetzen damit
+Futterquellen, also Lösungen, die sich nicht bewährt haben und damit nicht das
+globale Optimum darstellen.
+
+Employed Bees suchen nach Futterquellen in ihrer direkten Nachbarschat, die
+mehr Nektar haben, als die aktuelle Futterquelle, auf der sie sich befinden.
+Die Suche ist zwar zufällig, bezieht allerdings das globale Wissen des
+Schwarms über andere Futterquellen mit ein. Diese Art von Bienen sucht nach
+neuen Lösungen und teilt ihre Ergebnisse den Onlookers mit.
+
+Onlookers wiederum beziehen die Positionen der Futterquellen von den
+Employed Bees. Diese Bienen wählen stetig bessere Lösungen aus und suchen in
+ihrer Nachbarschaft nach weiteren Lösungen.
+
+% TODO: Hier noch mehr zur Strategie einfügen
 
 \section{Prozedur}
 

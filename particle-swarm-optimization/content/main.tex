@@ -3,12 +3,23 @@
 \section{Metapher}
 
 Der Particle Swarm Optimization (PSO) Algorithmus imitiert das Verhalten von
-Zugvögeln, die in einem Schwarm fliegen. Die theoretischen Grundlagen wurden
-dabei von Craig Reynolds bereits 1986 gelegt, der dieses Verhalten mit einem
-Programm namens \emph{Boids} simuliert. Die Idee des Algorithmus besteht darin,
-dass einzelne Agenten (Partikel) miteinander interagieren, indem sie zunächst
-selbstständig den Suchraum erkunden und anschließend das neu erlangte Wissen
-über ein kollektives Gedächtnis miteinander teilen. Jeder Partikel hält dabei
+Zugvögeln, die in einem Schwarm fliegen. Dabei befolgen sie drei Grundregeln:
+\begin{enumerate}
+    \item[(i)] Separation: Einzelne Vögel halten Abstand zueinander, um
+        Kollisionen mit ihren Nachbarn zu vermeiden. Dadurch sind die Vögel
+        gleichmäßig verteilt und es bilden sich keine lokalen Haufen.
+    \item[(ii)] Alignment: Einzelne Vögel fliegen in die durchschnittliche
+        Richtung ihrer Nachbarn. 
+    \item[(iii)] Cohesion: Einzelne Vögel fliegen in Richtung des
+        Masseschwerpunkts ihrer Nachbarn.
+\end{enumerate}
+
+Die theoretischen Grundlagen wurden dabei von Craig Reynolds bereits 1986
+gelegt, der dieses Verhalten mit einem Programm namens \emph{Boids}
+simuliert. Die Idee des Algorithmus besteht darin, dass einzelne Agenten
+(Partikel) miteinander interagieren, indem sie zunächst selbstständig den
+Suchraum erkunden und anschließend das neu erlangte Wissen über ein
+kollektives Gedächtnis miteinander teilen. Jeder Partikel hält dabei
 ein lokales Optimum (\emph{pBest}), zusammen mit den entsprechenden
 Positionskoordinaten in dem Suchraum und steuert dies dem kollektiven
 Gedächtnis bei, sodass der Schwarm iterativ ein globales Optimum (\emph{gBest})
@@ -18,7 +29,7 @@ ermitteln kann.
 
 Zunächst werden alle Agenten (Partikel) mit einer zufälligen Geschwindigkeit
 und Position initialisiert. Anschließend werden die jeweiligen Eigenschaften
-eines Partikels durch das Intertia, das kognitive individuelle Verhalten eines
+eines Partikels durch das Inertia, das kognitive individuelle Verhalten eines
 Partikels und das soziale Verhalten gegenüber aller Partikel aktualisiert. Ziel
 ist es, dass alle Agenten das Optimum in einem multidimensionalen Suchraum
 finden.
@@ -39,7 +50,8 @@ aus dem jeweiligen Optimum und der aktuellen Position des Partikels
 multipliziert. Daraus lässt sich die folgende Formel für die Aktualisierung
 der Geschwindigkeit je Iteration ableiten:
 \begin{equation}
-    v_i(t+1) = v_i(t) + (c_1 * \mathrm{rand()} * (p_{i}^{best} - p_i(t))) + (c_2 * \mathrm{rand()} * (p_{gbest} - p_i(t)))
+    v_i(t+1) = v_i(t) + (c_1 * \mathrm{rand()} * (p_{i}^{best} - p_i(t))) +
+        (c_2 * \mathrm{rand()} * (p_{gBest} - p_i(t)))
 \end{equation}
 Anschließend wird die Position in jeder Iteration aus der aktuellen Position
 eines Partikels und der zuvor berechneten Geschwindigkeit berechnet:
@@ -64,16 +76,53 @@ Partikel die Kosten abhängig von ihrer Position berechnet. Die aktuelle
 Position entspricht zu Beginn dem lokalen Optimum (\emph{pBest}). Wenn die
 Kosten des lokalen Partikels kleiner als die bereits bekannten Kosten im
 kollektiven Gedächtnis sind, dann wird die globale beste Position mit der
-lokalen Position des Partikels überschrieben.
+lokalen Position des Partikels überschrieben. Quelltext
+\ref{lst:initialize-particle} bildet dieses Verhalten in einem Pseudocode ab.
+
+\begin{lstlisting}[caption={Initialisierung der Parikel},
+    label={lst:initialize-particle}]
+population = 0
+p_gBest = 0
+for i = 1 to populationSize do
+    p_velocity = randomVelocity()
+    p_position = randomPosition(populationSize)
+    p_cost = cost(p_position)
+    p_best = = p_position
+    if p_cost <= p_gBest then
+        p_gBest = p_best
+    end if
+done
+\end{lstlisting}
 
 Anschließend wird die jeweilige Geschwindigkeit und Position der Partikel
 aktualisiert, die Kosten an der jeweiligen Position neu berechnet und ggf. als
 neues lokales Optimum gesetzt, bis die Abbruchbedingung erfüllt ist. Eine
 Abbruchbedingung kann beispielsweise das Erreichen einer maximalen Anzahl an
-Iterationen sein oder ein Fehlerwert unter einen vordefinierten Schwellwert
-fällt. Dann kann davon ausgegangen werden, dass ein globales Optimum gefunden
-wurde. Sind die Kosten der aktuellen Position eines Partikels kleiner als die
-des bisherigen globalen Optimums, wird auch dieser Wert angepasst.
+Iterationen sein oder ein Fehlerwert, der unter einen vordefinierten
+Schwellwert fällt. Dann kann davon ausgegangen werden, dass ein globales
+Optimum gefunden wurde. Sind die Kosten der aktuellen Position eines
+Partikels kleiner als die des bisherigen globalen Optimums, wird auch dieser
+Wert angepasst. Quelltext \ref{lst:update-particle} drückt dieses Verhalten
+im Pseudocode aus.
+
+\begin{lstlisting}[caption={Aktualisierung der Partikel},
+    label={lst:update-particle}]
+while !stopCondition() do
+    for all p in population do
+        p_velocity = updateVelcoity(p_velocity, p_gBest, p_best)
+        p_position = updatePosition(p_position, p_velocity)
+        p_cost = cost(p_position)
+        if p_cost s<= p_gBest then
+            p_best = p_position
+            if p_cost <= p_gBest then
+                p_gBest = p_best
+            end if
+        end if
+    done
+done
+
+return p_gBest
+\end{lstlisting}
 
 \section{Exploration and Exploitation}
 
@@ -85,15 +134,95 @@ Konstantebeeinflusst $c_1$ wird.
 Die Exploitation sorgt vor allem dafür, dass vielversprechende, bereits
 bekannte Regionen genauer von den Partikeln untersucht werden. Diese Regionen
 werden durch das kollektive Gedächtnis des Schwarms festgelegt. Wie stark ein
-Partikel exploriert, wird damit maßgeblich durch die Konstante $c_2$ und das
-harmonisierte Flugverhalten bez. der Position und Geschwindigkeit der Partikel
-(Intertia) beeinflusst.
+Partikel exploriert, wird damit maßgeblich durch die Konstante $c_2$
+beeinflusst.
 
 Für den Erfolg des PSO ist eine ausgewogene Balance zwischen Exploration und
-Exploitation unabdingbar.
+Exploitation unabdingbar. Ein harmonisiertes Flugverhalten bez. der Position
+und Geschwindigkeit der Partikel wird durch eine Konstante, dem Inertia
+gewichtet. Durch das Inertia kann die Exploration und Exploitation balanciert
+werden. 
 
 \section{Entscheidungsregeln für Schwarmverhalten}
 
+Die Inertia lässt ein einzelnes Partikel mit derselben Geschwindigkeit in
+dieselbe Richtung fliegen, wie zuvor.
+\begin{itemize}
+    \item $inertia = 0$: Die eigene momentane Geschwindigkeit und Position
+        $v^t$ eines Partikels hat keinen Einfluss auf den Geschwindigkeits-
+        und Positionsvektor $v^{(t+1)}$ der nächsten Iteration.
+    \item $inertia = 0.5$: Die eigene Position und Geschwindigkeit eines
+        Partikels fließt in die Berechnung der nächsten Geschwindigkeit und
+        Position mit ein, ist allerdings nicht das alleinige Kriterium für
+        das Flugverhalten eines Partikels. Dadurch wird das Flugverhalten
+        von Partikeln in einem Schwarm simuliert.
+    \item $inertia = 1$: Die momentante Geschwindigkeit und Position hat
+        maximalen Einfluss auf den Geschwindigkeits- und Positionsvektor
+        eines Partikels in der nächsten Iteration.
+\end{itemize}
+
+Die \emph{Personal Influcence} betimmt, in wie weit ein Partikel zu seiner
+vorherigen Position zurückkehrt, die besser ist als die momentane.
+Die \emph{Social Influence} hingegen lässt das Partikel in die Richtung
+seines besten Nachbarn fliegen.
+
+Wird die \emph{cognitive ratio} auf 1 gesetzt und die \emph{social ratio}
+auf 0, so ignoriert ein Partikel die besten Ergebnisse seiner Nachbarn und
+damit des Schwarms und sucht nur in seiner eigenen Umgebung nach einem
+Optimum. Damit gibt es kein Schwarmverhalten zwischen den Partikeln; jedes
+Partikel findet ein lokales Optimum.
+
+Wird hingegen die \emph{social ratio} auf 1 gesetzt und die \emph{cognitive
+ratio} auf 0, so tritt ein Partikel lediglich in die Fußstapfen seiner
+Nachbarn. Das hat zur Folge, dass keine neuen Position gesucht werden, es
+findet keine Exploration mehr statt.
+
+Ein ausgewogenes Verhältnis zwischen Inertia, \emph{Personal Influcence} und
+\emph{Social Influcence} ist für den Erfolg des PSO notwendig. Dann findet
+eine individuelle Suche nach einer besten Position statt, zudem wird das
+kollektive Wissen des Schwarms in einer schwarmübergreifenden Suche nach
+einem globalen Optimum berücksichtigt.
+
 \section{Parameterabhängigkeiten}
 
+Die \emph{Größe des Schwarms} bestimmt die initale Diversität eines einzelnen
+Partikels im Schwarm. Je größer ein Schwarm ist, desto mehr neue Positionen
+können in dem Suchraum pro Iteration erkundet werden. Allerdings wird dadurch
+auch die Komplexität der Berechnungen pro Iteration erhöht, weshalb ein zu
+großer Wert nicht zielführend ist. Dann gleicht das Verhalten des Algorithmus
+einer zufälligen parallelen Suche nach dem Optimum. Für diesen Parameter sollte
+deshalb ein Wert zwischen 10 und 30 gewählt werden.
+
+Die \emph{Anzahl an Nachbarn} bestimmt, wie stark einzelne Partikel miteinander
+interagieren. Je kleiner die Anzahl der Nachbarn eines Partikels ist, desto
+weniger Interaktion findet zwischen den Partikeln statt. Dadurch konvergiert
+der Algorithmus mit weniger Nachbarn langsamer, allerdings wird das
+tatsächliche globale Optimum eher von einem Schwarm gefunden. Zu viele
+Nachbarn birgen die Gefahr, dass nicht das globale Optimum gefunden wird.
+
+Die \emph{Anzahl an Iterationen} muss für jede Problemstellung angepasst
+werden. Zu wenige Iterationen können den Algorithmus frühzeitig abbrechen,
+obwohl das globale Optimum noch nicht gefunden wurde, zu viele Iterationen
+führen zu einer längeren Laufzeit des Algorithmus, die vielleicht gar nicht
+notwendig ist, da sich das globale Optimum nur noch geringfügig oder gar nicht
+mehr verändert.
+
 \section{Zusammenspiel \emph{gBest} und \emph{pBest}}
+
+Mit einer Konfiguration, in der die Anzahl der Partikel auf 20 gesetzt wird,
+die Inertia den Wert 0.729844 annimmt und sowohl das individuelle kognitive
+Verhalten (\emph{cognitive ratio}) und das soziale Verhalten
+(\emph{social ratio}) auf den Wert 1.496180 gesetzt werden, ist das Verhältnis
+zwischen Exploration und Exploitation ausgewogen, weil sowohl die individuelle
+Suche eines Partikels nach einem Optimum (effektives Schwarmverhalten), als
+auch das kollektive Gedächtnis des Schwarms (koordiniertes Schwarmverhalten)
+gleichermaßen berücksichtigt werden.
+Somit hat der Schwarm bereits nach wenigen Iterationen das globale Optimum
+\emph{gBest} gefunden.
+
+Ein ausgewogenes Verhalten zwischen effektivem und koordiniertem
+Schwarmverhalten ist notwendig, da sonst entweder jeder Partikel unabhängig
+nach einer Lösung sucht, was der Komplexität einer zufälligen Suche gleichkommt
+oder aber alle Partikel in die Fußstapfen ihrer Nachbarn treten und dadurch
+den Suchraum nicht weiter explorieren, wodurch das globale Optimum nicht
+gefunden werden kann.
