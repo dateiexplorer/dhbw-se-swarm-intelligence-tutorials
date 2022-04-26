@@ -12,11 +12,13 @@ der Futterquelle.
 Daraufhin kehren die Scouts zur Futterstelle zurück. Einige andere Bienen
 folgen ihnen. Ein kleiner Teil der Scouts sucht daraufhin nach neuen
 Futterquellen, während andere Bienen weiterhin die Qualität einer
-Futterquelle bei jeder Rückkehr in den Bienenstock kommunizieren.
+Futterquelle bei jeder Rückkehr in den Bienenstock über einen sog. Bienentanz
+kommunizieren.
 
 Dieses Verhalten sorgt für eine effiziente Nahrungssuche bei Honigbienen und
 wird für die iterative Suche nach einer Lösung von Optimierungsproblemen im
-ABC immitiert.
+ABC immitiert. Gesucht ist dabei die Biene, die die Futterquelle mit der besten
+Fitness findet.
 
 \section{Strategie}
 
@@ -24,7 +26,7 @@ Um ein globales Optimum zu finden, wird eine Honigbienenkolonie imitiert, die
 drei Arten von Bienen beinhaltet, die sog. \emph{Employed Bees} (beschäftigten
 Bienen), die \emph{Onlookers} (Zuschauerbienen) und die \emph{Scouts}
 (Kundschafterbienen). Eine Hälfte der Kolonie besteht aus Employed Bees, die
-andere Hälfte beinhaltet die Onlookers und Scouts.
+andere Hälfte beinhaltet die Onlookers.
 
 Futterquellen repräsentieren Lösungen eines Problems, das mit dem ABC
 gelöst werden soll. Je höher die Qualität bzw. Fitness einer Lösung ist, desto
@@ -49,7 +51,7 @@ ihrer Nachbarschaft nach weiteren Lösungen.
 
 Der ABC besteht aus drei Phasen. In der ersten Phase des Alogrithmus werden
 verschiedene Positionen im Suchraum zufällig als Futterquellen ausgesucht und
-deren Fitness berechnet.
+deren Fitness ermittelt.
 In der zweiten Phase schwärmen die Employed Bees aus und suchen nach neuen
 Futterquellen in direkter Nachbarschaft zu den initialen Futterquellen.
 Wenn die Onlookers ausschwärmen, präferieren sie die Positionen, die
@@ -100,19 +102,95 @@ gleich der Anzahl an Employed Bees.
 Um aus dem Gedächtnis einen neuen Kanditat für die Futterquelle zu erzeugen,
 kann die folgende Formel angewendet werden:
 \begin{equation}
-    v_{ij} = x_{ij} + \Phi_{ij}(x_{ij} - x{kj})
+    v_{ij} = x_{ij} + \Phi_{ij}(x_{ij} - x_{kj})
 \end{equation}
 wobei $k$ ein zufälliger Index der möglichen Lösungen und $j$ ein zufälliger
 Index des Vektors an Optimierungsparametern ist. $\Phi$ ist eine zufällige
-Zahl zwischen $[-a;a]$.
+Zahl zwischen $[-1;1]$.
 
 \section{Pseudocode}
 
+Zu Beginn wird die Population der Kolonie initialisiert. Dabei werden genauso
+viele Employed Bees erzeugt, wie es Lösungen für das Problem gibt. Diese
+Größe wird als \code{problemSize} angegeben.
+Anschließend wird iterativ das globale Optimum ermittelt. Eine
+\code{while}-Schleife läuft so lange, bis das globale Optimum gefunden wurde
+oder eine andere Abbruchbedingung erfüllt ist, beispielsweise die maximale
+Anzahl an Zyklen, die bei Programmstart festgelegt werden, erreicht wurde.
+
+Bei jeder Iteration bewerten zunächst die Employed Bees die Fitness ihrer
+aktuellen Position. Anschließend ermitteln die Bienen die Position mit der
+besten Fitness ihrer Nachbarn und schwirren dorthin aus.
+
+Die Informationen über die neuen Futterquellen werden dem kollektiven
+Gedächtnis hinzugefügt. Daraufhin suchen die Onlookers eine beste
+Futterquelle, basierend auf der Fitness dieser, aus.
+
+Ist nach diesem Schritt keine Biene mehr an der aktuellen Position, so wird
+diese Futterquelle aufgelöst und die Employed Bee wird zum Scout und sucht
+eine zufällige andere Position im Suchraum.
+
+Wenn der Algorithmus terminiert, liefert er als Ergebnis die Biene mit dem
+besten Ergebnis zurück, dem globalen Optimum.
+
 \section{Exploration and Exploitation}
+
+Die Exploration~--~also das Erkunden neuen Suchraums~--~wird beim ABC durch die
+zufällige Auswahl der Futterquellen durch die Scouts sichergestellt. Dadurch,
+dass Futterquellen nach jeder Iteration von den Employed Bees nach ihrer
+Fitness bewertet werden und Onlookers dementsprechend Positionen auswählen,
+wird sichergestellt, dass bekannter Suchraum nach jeder Iteration weiterhin
+genauer untersucht wird (Exploitation). Gleichzeitig werden Positionen, die
+keinesfalls das globale Optimum bieten, schnell aussortiert und durch neue
+Positionen im Suchraum ersetzt.
+
+Damit kann der Suchraum effektiv exploriert werden (sichergestellt durch
+Scouts und Employed Bees, die ihre noch unbekannte Nachbarschaft mitbetrachtet)
+und bereits bekannter Suchraum exploitiert werden (durch Employed Bees, die
+ihre eigene Futterquelle bewerten und Onlooker Bees, die nur Positionen
+anfliegen, die ihnen von den Employed Bees mitgeteilt werden).
 
 \section{Entscheidungsregeln für Schwarmverhalten}
 
+Employed Bees wählen Futterquellen zufällig im bekannten Suchraum aus. Diese
+Informationen werden anderen Employed Bees und den Onlookers durch das
+kollektive Gedächtnis zugänglich gemacht.
+Mithilfe dieser Informationen suchen die Onlookers das globale Optimum, indem
+sie die Futterquellen auf ein fitnessabhängiges Rouletterad legen und
+wahrscheinlichkeitsbasiert auswählen.
+Employed Bees suchen nach dem lokalen Optimum, indem sie sich
+Nachbarfutterquellen ansehen und die mit der besten Fitness auswählen.
+Scouts suchen zufällig neue Futterquellen im unbekannten Suchraum.
+
 \section{Parameterabhängigkeiten}
+
+Die \emph{Anzahl der Zyklen} gibt die maximale Anzahl an Durchläufen an, bis
+der Algorithmus terminiert wird. Wird dieser Wert zu klein gewählt, besteht
+die Gefahr, dass das tatsächliche globale Optimum noch nicht gefunden wurde,
+ist der Wert hingegen zu groß, werden unnötige Zyklen durchlaufen, in denen
+sich das globale Optimum nur noch geringfügig oder nicht mehr verändert.
+
+Die \emph{Anzahl der Futterquellen} entspricht der initialen Anzahl an
+Employed Bees (und damit auch der Onlookers), die jeweils die Hälfte der
+Gesamtpopulation ausmachen. Eine größere Anzahl an Futterquellen erhöht die
+Komplexität pro Zyklus und benötigt damit mehr Rechenaufwand und Zeit.
+Gleichzeitig kann ein genaueres Ergebnis erzielt werden. Hier ist eine
+Abwägung zwischen Genauigkeit und Komplexität individuell für das
+Optimierungsproblem zu treffen.
 
 \section{Zusammenspiel \emph{Employed Bee}, \emph{Onlooker Bee}, und
     \emph{Scout Bee}}
+
+Mit einer Konfiguration von einer Anzahl an Futterquellen von 100 und einem
+Zyklenlimit von 25 wird zunächst eine Population von 100 Employed Bees und
+100 Onlookers initialisiert, da für jede Futterquelle eine Employed Bee
+benötigt wird und diese die Hälfte der gesamten Population stellen.
+Employed Bees ermitteln die Fitness ihrer Futterquellen und teilen sie den
+Onlookers durch das kollektive Gedächtnis (Bienentanz) mit. Daraufhin
+schwirren die Onlookers wahrhscheinlichkeitbasiert zu den Futterquellen mit
+der besten Fitness. Wird eine Futterquelle nicht angeflogen, so wird die
+für diese Quelle zuständige Employed Bee zum Scout und sucht eine neue
+Futterquelle im unbekannten Suchraum.
+Dieser Vorgang wird zyklisch wiederholt. Nach 25 Zyklen konvergiert der
+Algorithmus bereits. Er wird terminiert und das bisherige globale Optimum
+wird zurückgegeben.
