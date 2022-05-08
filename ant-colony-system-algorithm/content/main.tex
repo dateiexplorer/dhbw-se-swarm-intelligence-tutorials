@@ -24,8 +24,9 @@ gelaufen sind. Andere Ameisen folgend schließlich dieser Duftspur und
 gelangen ebenfalls an das Futter. Kürzer Wege werden so öfter frequentiert
 von Ameisen abgelaufen, wodurch die Pheromonspur auf diesem Weg stärker wird,
 während die Pheromonspur auf den anderen Wegen mit der Zeit verfliegt.
-So nehmen immer mehr Ameisen die kürzeste Strecke und es bilden sich die
-typischen Ameisenstraßen.
+\textcolor{red}{Die Pheromonspur verfliegt auf den anderen Wegen mit der 
+Zeit.} So nehmen immer mehr Ameisen die kürzeste Strecke und es bilden sich 
+die typischen Ameisenstraßen.
 Damit nutzen Ameisen ihr Schwarmverhalten, um den Weg von ihrem Nest zur
 Futterstelle zu optimieren. Eine Eigenschaft, die sich auch für das TSP
 zunutze gemacht werden kann.
@@ -36,12 +37,14 @@ Die Strategie für diesen Algorithmus liegt darin, dass sowohl das kollektive
 Schwarmverhalten durch die Pheromonspur genutzt wird, um bekannte Wege zu
 exploitieren und den günstigsten Pfad zu finden, als auch ein individuelles
 Verhalten in die Wegfindung einzelner Ameisen mit einfliest, das durch eine
-einfache Heuristik simuliert wird.
+einfache Heuristik simuliert wird. \textcolor{red}{Das kollektive 
+Schwarmverhalten steht dabei für die historischen Informationen, während das 
+individuelle Verhalten die heuristischen Informationen darstellen.}
 
-Ameisen laufen verschiedene Pfade iterativ ab und teilen die
-Pheromoninformationen über das kollektive Gedächtnis in einer Pheromonmatrix,
-die jeder Ameise zur Verfügung steht. Auf diese Weise lässt sich effektiv
-ein Optimum für den gewünschten Suchraum finden.
+Ameisen laufen \textcolor{red}{zufällig} verschiedene Pfade iterativ ab und 
+teilen die Pheromoninformationen über das kollektive Gedächtnis in einer 
+Pheromonmatrix, die jeder Ameise zur Verfügung steht. Auf diese Weise lässt 
+sich effektiv ein Optimum für den gewünschten Suchraum finden.
 
 \section{Prozedur}
 \label{sec:prozedur}
@@ -67,13 +70,21 @@ von Position $i$ nach Position $j$ von einer Ameise gelaufen wird,
 $\tau_{i,j}$ ist die Pheromoninformation für diese Kante und wird über das
 kollektive Gedächtnis mit allen Ameisen geteilt, $\eta_{i,j}$ ist die
 heuristische Information, die beispielsweise durch die Berechnung der
-Euklidischen Distanz ziwschen den einzelnen Punkten im Graph berechnet wird;
+Euklidischen Distanz ziwschen den einzelnen Punkten \textcolor{red}{$i$ und 
+$j$} im Graph berechnet wird;
 $\alpha$ ist die Gewichtung, mit der die Pheromoninformationen, also das
-kollektive Gedächtnis, auf die Entscheidung der Ameise Einfluss nehmen und
+kollektive Gedächtnis, auf die Entscheidung der Ameise Einfluss nehmen 
+\textcolor{red}{(Die Frage für die Ameise ist, wie sehr vertraue ich den 
+Pheromoninformationen?)} und
 $\beta$ ist entsprechend die Gewichtung für die Einflussnahme der Heuristik,
-also dem individuelle Verhalten, auf die Entscheidung.
+also dem individuelle Verhalten, auf die Entscheidung. \textcolor{red}{(Die 
+Frage für die Ameise ist, wie sehr vertraue ich den heuristischen 
+Informationen?)}
 Um bessere Ergebnisse zu erzielen, werden die Ergebnisse außerdem ins
-Verhältnis zu den Ergebnissen aller Ameisen gesetzt. 
+Verhältnis zu den Ergebnissen aller Ameisen gesetzt.
+\textcolor{red}{$k$ ist der Index einer virtuellen Ameise, $c$ ist die 
+gesamte Anzahl der Ameisen, $\tau_{i,k}$ ist die gesamte Pheromonenmatrix
+und $\eta_{i,k}$ sind die gesamten Distanzen.}
 
 Mit dieser grundlegenden Formel lassen sich verschiedene Pfade im
 gewünschten Suchraum ablaufen.
@@ -102,6 +113,8 @@ Für den Algorithmus ergibt sich folgender Pseudocode:
     done
 \end{lstlisting}
 
+\textcolor{red}{Die drei Blöcke sollen noch erklärt werden!}
+
 In jedem Durchlauf läuft jede Ameise mithilfe der in \ref{sec:prozedur}
 beschriebenen Formel einen gesamten Pfad für das TSP ab. Anschließend
 wird die Pheromonmatrix für den nächsten Durchlauf aktualisiert.
@@ -111,7 +124,8 @@ Kante für die nächste Iteration behalten wird. Damit werden weniger
 frequentierte Kanten schneller im kollektiven Gedächtnis als
 nichtzielführend markiert, wodurch der Algorithmus schneller ein globales
 Optimum finden kann.
-Außerdem lässt sich der Algorithmus auch bei dynamischen Problemen einsetzen.
+Außerdem lässt sich der Algorithmus auch bei dynamischen \textcolor{red}{
+nicht nur bei statischen} Problemen einsetzen.
 Würden sich Ausgangsparameter ändern, kann über die \emph{evaporation}
 sichergestellt werden, dass ursprüngliche vielversprechende Lösungen, die
 durch die Parameteränderung nicht mehr zielführend sind, mit der Zeit wieder
@@ -121,12 +135,13 @@ momentane gefundene globale Optimum dar.
 
 \section{Exploration and Exploitation}
 
-Die Exploration, also das Erkunden des neuen Suchraums, wird maßgeblich durch
-die Gewichtung $\beta$ der Metaheuristik beeinflusst. Die Erkundung geschieht
-dadurch, dass Ameisen an jedem Knotenpunkt im Graphen wahrscheinlichkeitsbasiert
-auswählen, welche Kante sie entlanggehen. Je höher $\beta$ im Gegensatz zu
-$\alpha$ gewählt wird, desto mehr Suchraum wird exploriert, allerdings leidet
-darunter die Exploitation.
+\textcolor{red}{Heuristische und Historische Komponente mit einbringen?}
+Die Exploration, also das \textcolor{red}{zufällige} Erkunden des neuen 
+Suchraums, wird maßgeblich durch die Gewichtung $\beta$ der Metaheuristik 
+beeinflusst. Die Erkundung geschieht dadurch, dass Ameisen an jedem Knotenpunkt 
+im Graphen wahrscheinlichkeitsbasiert auswählen, welche Kante sie entlanggehen. 
+Je höher $\beta$ im Gegensatz zu $\alpha$ gewählt wird, desto mehr Suchraum wird 
+exploriert, allerdings leidet darunter die Exploitation.
 Diese wiederum wird durch die Gewichtung $\alpha$ des Einflusses des
 kollektiven Gedächtnisses bei der Wegfindung über die Pheromonenmatrix
 beeinflusst.
@@ -135,6 +150,8 @@ die Suche nach einem Optimum möglichst effizient zu gestalten.
 
 \section{Entscheidungsregeln für Schwarmverhalten}
 
+\textcolor{red}{Pij was bedeutet das? Was passiert da konkret? Warum ist dort 
+wichtig ein Tradeof?}
 Ameisen im ACO nutzen zum einen das kollektive Gedächtnis, um
 wahrscheinlichkeitsbasiert an jedem Knotenpunkt eines Graphen die nächste
 Kante auszuwählen ($\tau$), zum anderen eine Metaheuristik ($\eta$), um ein
@@ -152,6 +169,7 @@ nicht gefunden wird, da jegliches individuelle Verhalten fehlt.
 
 \section{Parameterabhängigkeiten}
 
+\textcolor{red}{$\alpha$ und $\beta$ allgemein erklären, Was bedeutet roh?}
 Für den ACO können diverse Startparameter definiert werden. Neben den
 bereits ausführlich erläuterten Parametern $\alpha$ und $\beta$, kann
 mithilfe des Parameters \emph{evaporation} Angegeben werden, wie viel Prozent
@@ -206,6 +224,7 @@ verbessern würde.
 
 \section{Zusammenspiel \emph{Ant} und \emph{AntColony}}
 
+\textcolor{red}{Wie arbeiten die Individuen kollektiv zusammen?}
 Bei einer Konfiguration von $\alpha = 2$ und $\beta = 2$, werden $\tau$ und
 $\eta$ gleichermaßen berücksichtigt. Damit wird sowohl das kollektive
 Gedächtnis (Pheromonenmatrix), als auch das individuelle Verhalten
